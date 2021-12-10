@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-
 @Service
 public class SchedulerService {
 
@@ -33,22 +32,12 @@ public class SchedulerService {
 
         //TODO: debe pasarlo a reactivo, no puede trabaja elementos bloqueantes
         //TODO: trabajar el map reactivo y no deben colectar
-        //var program = programRepository.findById(programId).block();
         var program = programRepository.findById(programId);
 
         var result = program
                 .flatMapMany(programa -> Flux.fromStream(getDurationOf(programa)))
                 .map(toProgramDate(startDate, endDate, pivot[0], index))
                 .switchIfEmpty(Mono.error(new RuntimeException("Objeto vacío")));
-
-        //var program = programRepository.findById(programId).block();
-        /*
-        return Optional.ofNullable(program)
-                .map(this::getDurationOf)
-                .orElseThrow(() -> new RuntimeException("El programa academnico no existe"))
-                .map(toProgramDate(startDate, endDate, pivot[0], index))
-                .collect(Collectors.toList());
-                */
         return result;
     }
 
